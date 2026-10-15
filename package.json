@@ -1,0 +1,37 @@
+{
+  "name": "open-nanjing-3d",
+  "version": "1.0.0",
+  "description": "南京全域 22+ 大景点 3D 高拟真沙盘地图与文旅导览开源项目 (Open Nanjing 3D) — 汇聚开发者共建金陵数字孪生",
+  "main": "index.js",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "new:landmark": "node scripts/create-landmark.js"
+  },
+  "keywords": [
+    "threejs",
+    "3d",
+    "nanjing",
+    "gis",
+    "digital-twin",
+    "open-source",
+    "tourism",
+    "webgl"
+  ],
+  "author": "yuhangwu97",
+  "license": "MIT",
+  "dependencies": {
+    "three": "^0.186.1",
+    "vite": "^8.3.4"
+  },
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yuhangwu97/open-nanjing-3d.git"
+  },
+  "bugs": {
+    "url": "https://github.com/yuhangwu97/open-nanjing-3d/issues"
+  },
+  "homepage": "https://github.com/yuhangwu97/open-nanjing-3d#readme"
+}

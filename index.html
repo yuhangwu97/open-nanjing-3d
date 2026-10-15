@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>南京全域 22+ 大地标高拟真 3D 沙盘地图与旅游路线攻略导览系统 | Open Nanjing 3D</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="/src/style.css" />
+</head>
+<body>
+
+  <!-- Three.js 3D 沙盘容器 -->
+  <div id="canvas-container"></div>
+
+  <!-- 3D 地图悬浮气泡牌容器 -->
+  <div id="map-pins-container"></div>
+
+  <!-- 纯享全屏模式退出悬浮钮 (仅在沉浸模式显示) -->
+  <button id="btn-exit-immersive" class="fixed top-3 right-3 z-50 hidden glass-panel rounded-full px-3.5 py-1.5 text-xs font-bold text-amber-300 border border-amber-400/50 hover:bg-slate-800 cursor-pointer shadow-lg">
+    👁️ 退出纯享全屏 (按 H 键)
+  </button>
+
+  <!-- ================= 顶部精简导航栏：一行紧凑悬浮，绝不挡视野 ================= -->
+  <header id="top-header" class="fixed top-2.5 left-2.5 right-2.5 z-30 flex flex-wrap items-center justify-between gap-1.5 pointer-events-none transition-opacity duration-200">
+    <!-- 左侧品牌与沙盘复位按钮 -->
+    <div class="glass-panel rounded-full px-3 py-1.5 flex items-center gap-2 pointer-events-auto">
+      <span class="text-sm">🗺️</span>
+      <span class="text-xs font-bold text-white hidden sm:inline">南京 22+ 大地标 3D 沙盘</span>
+      <button id="btn-sandbox-overview" class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-[11px] px-2.5 py-1 rounded-full transition shadow cursor-pointer shrink-0">
+        🧭 全景复位
+      </button>
+      <button id="btn-toggle-route-panel" class="bg-slate-800 hover:bg-slate-700 text-amber-300 border border-amber-400/30 text-[11px] px-2.5 py-1 rounded-full transition cursor-pointer shrink-0 flex items-center gap-1">
+        <span>📋 行程单</span>
+        <span id="route-badge" class="px-1.5 py-0.2 bg-amber-500/20 rounded-full text-[10px]">22站</span>
+      </button>
+      <a href="https://github.com/yuhangwu97/open-nanjing-3d" target="_blank" class="bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-600 text-[11px] px-2.5 py-1 rounded-full transition cursor-pointer shrink-0 flex items-center gap-1" title="在 GitHub 参与开源共建">
+        <span>⭐ 开源共建</span>
+      </a>
+    </div>
+
+    <!-- 中部：5条精选旅游攻略路线切换器 -->
+    <div class="glass-panel rounded-full px-2.5 py-1 flex items-center gap-1 overflow-x-auto custom-scroll max-w-full pointer-events-auto">
+      <button data-route="all" class="route-pill active">🌟 22景全览</button>
+      <button data-route="hub" class="route-pill">🚄 空铁枢纽&名山线</button>
+      <button data-route="classic" class="route-pill">🔥 钟山文博线</button>
+      <button data-route="modern" class="route-pill">🏙️ 河西滨江线</button>
+      <button data-route="culture" class="route-pill">🙏 历史铭记与祈福</button>
+      <button data-route="night" class="route-pill">🌙 夜游秦淮河西</button>
+      <button data-route="none" class="route-pill">🧹 隐藏路线</button>
+    </div>
+
+    <!-- 右侧：季节与纯净视野控制 -->
+    <div class="glass-panel rounded-full px-2 py-1 flex items-center gap-1 pointer-events-auto">
+      <button id="btn-env-autumn" class="env-btn active">🍂 深秋</button>
+      <button id="btn-env-summer" class="env-btn">🌿 盛夏</button>
+      <button id="btn-env-night" class="env-btn">🏮 夜景</button>
+      <button id="btn-toggle-pins" class="env-btn active" title="显示/隐藏3D标签">🏷️ 标签</button>
+      <button id="btn-immersive" class="env-btn text-amber-300 border-amber-400/40" title="隐藏全部面板看纯享3D大图 (快捷键 H)">👁️ 纯享</button>
+    </div>
+  </header>
+
+  <!-- ================= 左侧可折叠悬浮卡片：默认收起不挡图，点击“📋 行程单”才展开 ================= -->
+  <aside id="route-panel" class="glass-panel side-panel-transition panel-hidden-left fixed top-14 left-2.5 w-[250px] rounded-2xl p-2.5 z-20 flex flex-col gap-2 max-h-[calc(100vh-80px)] overflow-y-auto custom-scroll">
+    <div class="flex items-center justify-between border-b border-slate-700/70 pb-1.5">
+      <div class="min-w-0">
+        <div id="route-title" class="text-xs font-bold text-amber-400 truncate">🌟 二十二大地标古今全览线</div>
+        <div id="route-subtitle" class="text-[10px] text-slate-400 truncate">点击任意站即可飞往并查看详情</div>
+      </div>
+      <button id="btn-hide-route-panel" class="text-slate-400 hover:text-white text-[11px] bg-slate-800/90 px-2 py-0.5 rounded-lg cursor-pointer shrink-0">
+        ✕ 收起
+      </button>
+    </div>
+
+    <!-- 路线节点时间轴列表 (由 JS 动态渲染) -->
+    <div id="route-steps-list" class="flex flex-col gap-1 text-xs"></div>
+
+    <!-- 路线总结小贴士 -->
+    <div id="route-tip" class="bg-slate-900/75 border border-slate-700/70 rounded-xl p-2 text-[10.5px] text-slate-300 leading-relaxed"></div>
+  </aside>
+
+  <!-- ================= 右侧悬浮抽屉：仅在点击景点时弹出，平时完全隐藏不挡图 ================= -->
+  <aside id="guide-drawer" class="glass-panel side-panel-transition panel-hidden-right fixed top-14 right-2.5 w-[295px] max-w-[calc(100vw-20px)] rounded-2xl p-3 z-20 flex flex-col gap-2 max-h-[calc(100vh-80px)] overflow-y-auto custom-scroll">
+    <!-- 景点头部标题与折叠控制 -->
+    <div class="flex items-center justify-between gap-1 border-b border-slate-700/80 pb-2">
+      <div class="flex items-center gap-1.5 min-w-0">
+        <span id="guide-icon" class="text-lg shrink-0">🏛️</span>
+        <h2 id="guide-name" class="text-[13.5px] font-bold text-white truncate">中山陵 · 钟山风景区</h2>
+      </div>
+      <div class="flex items-center gap-1 shrink-0">
+        <button id="btn-toggle-guide-text" class="text-amber-300 hover:text-white text-[10.5px] bg-slate-800 hover:bg-slate-700 px-2 py-1 rounded-lg cursor-pointer" title="折叠下方长文，仅保留视角机位按钮">
+          精简
+        </button>
+        <button id="btn-close-guide" class="text-slate-400 hover:text-white text-[10.5px] bg-slate-800 hover:bg-slate-700 px-2 py-1 rounded-lg cursor-pointer" title="关闭右侧面板">
+          ✕
+        </button>
+      </div>
+    </div>
+
+    <!-- 专属分镜机位切换 (Camera Angles) - 置顶方便直接点选看景 -->
+    <div>
+      <div class="text-[10.5px] font-semibold text-amber-300/90 mb-1 flex items-center justify-between">
+        <span>📸 专属观赏机位 (点击切换视角)</span>
+        <span id="guide-tags" class="hidden"></span>
+      </div>
+      <div id="guide-camera-btns" class="grid grid-cols-2 gap-1"></div>
+    </div>
+
+    <!-- 中山陵专属：392级石阶第一人称登陵漫游控制器 -->
+    <div id="mausoleum-walk-box" class="bg-amber-950/50 border border-amber-500/40 rounded-xl p-2 flex flex-col gap-1.5">
+      <button id="btn-walk-toggle" class="w-full bg-gradient-to-r from-amber-600 to-amber-500 hover:from-amber-500 hover:to-amber-400 text-white font-bold text-[11.5px] py-1.5 px-2.5 rounded-lg shadow flex items-center justify-center gap-1 cursor-pointer transition">
+        <span id="walk-icon">▶</span>
+        <span id="walk-btn-text">第一人称登陵漫游 (392级)</span>
+      </button>
+      <div class="flex items-center justify-between text-[10.5px]">
+        <span id="walk-stage-label" class="text-amber-300 font-medium truncate">博爱坊前广场</span>
+        <span id="walk-step-counter" class="text-sky-300 font-mono font-semibold shrink-0">0/392级</span>
+      </div>
+      <div class="flex items-center gap-1.5">
+        <input id="walk-slider" type="range" min="0" max="1000" value="0" class="timeline-slider" />
+        <span id="walk-percent" class="text-[10px] font-mono text-slate-300 w-7 text-right shrink-0">0%</span>
+      </div>
+    </div>
+
+    <!-- 可一键折叠的攻略文字详情区 -->
+    <div id="guide-collapsible-body" class="flex flex-col gap-2">
+      <!-- 核心实用参数网格：时长 / 门票 / 最佳时段 -->
+      <div class="grid grid-cols-3 gap-1 bg-slate-900/75 border border-slate-700/60 rounded-xl p-1.5 text-center">
+        <div>
+          <div class="text-[9.5px] text-slate-400">⏱️ 建议游玩</div>
+          <div id="guide-duration" class="text-[10.5px] font-semibold text-amber-300">2.5-3h</div>
+        </div>
+        <div class="border-x border-slate-700/60 px-1">
+          <div class="text-[9.5px] text-slate-400">🎫 门票</div>
+          <div id="guide-ticket" class="text-[10.5px] font-semibold text-emerald-300 truncate">免费预约</div>
+        </div>
+        <div>
+          <div class="text-[9.5px] text-slate-400">🕒 最佳时段</div>
+          <div id="guide-besttime" class="text-[10.5px] font-semibold text-sky-300 truncate">08:30-11:00</div>
+        </div>
+      </div>
+
+      <!-- 必看亮点 -->
+      <div class="bg-slate-900/55 border border-slate-700/60 rounded-xl p-2">
+        <div class="text-[11px] font-bold text-amber-400 mb-0.5">✨ 建筑看点 & 实景细节</div>
+        <ul id="guide-highlights" class="text-[11px] text-slate-200 space-y-1 list-disc list-inside leading-snug"></ul>
+      </div>
+
+      <!-- 避坑指南与地道美食交通 -->
+      <div id="guide-tips-box" class="bg-slate-900/55 border border-slate-700/60 rounded-xl p-2">
+        <div class="text-[11px] font-bold text-teal-300 mb-0.5">🍜 游览路线与实用贴士</div>
+        <p id="guide-tips" class="text-[11px] text-slate-300 leading-snug"></p>
+      </div>
+    </div>
+
+    <!-- 底部：上一站 / 下一站导航按钮 -->
+    <div class="grid grid-cols-2 gap-1.5 pt-0.5">
+      <button id="btn-prev-spot" class="bg-slate-800 hover:bg-slate-700 border border-slate-600 text-slate-200 text-[11px] font-semibold py-1.5 rounded-xl cursor-pointer transition">
+        ⬅️ 上一站
+      </button>
+      <button id="btn-next-spot" class="bg-blue-600 hover:bg-blue-500 border border-blue-400 text-white text-[11px] font-semibold py-1.5 rounded-xl cursor-pointer transition shadow">
+        下一站 ➡️
+      </button>
+    </div>
+  </aside>
+
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>
