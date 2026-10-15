@@ -35,9 +35,8 @@ export default {
   id: 'citywall',
   name: '南京城墙 · 中华门瓮城',
   build(scene, ctx) {
-    const group = new THREE.Group();
 
-    function buildMingCityWallZhonghuamen() {
+    // buildMingCityWallZhonghuamen
       const group = new THREE.Group();
       const WX = -10, WZ = 215;
       group.position.set(WX, 0, WZ);
@@ -145,19 +144,6 @@ export default {
       group.add(watchtower);
 
       scene.add(group);
-    }
-
-    // -------------------------------------------------------------------------
-    // 地标十八：【南京老山国家森林公园 (“南京绿肺 · 江北明珠”百里翠峦)】 (X = -248, Z = -255)
-    // 1:1 真实细节：
-    // - 江北连绵起伏的多峰喀斯特森林山脉地形（主峰大刺山、西峰狮子岭、东峰鹰山）
-    // - 鹰山之巅矗立着标志性的五层八角飞檐【老山森林观景塔 / 状元塔】
-    // - 狮子岭深山古刹【兜率寺】红墙金瓦院落，山腰蜿蜒盘旋的【七珍线盘山森林步道】与苍松翠竹林海
-    // -------------------------------------------------------------------------
-
-
-    scene.add(group);
-
     return group;
   }
 };

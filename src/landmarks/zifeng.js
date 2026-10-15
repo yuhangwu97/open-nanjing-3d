@@ -35,9 +35,8 @@ export default {
   id: 'zifeng',
   name: '紫峰大厦 & 鼓楼',
   build(scene, ctx) {
-    const group = new THREE.Group();
 
-    function buildZifengTowerAndGulou() {
+    // buildZifengTowerAndGulou
       const group = new THREE.Group();
       const ZX = 265, ZZ = 85;
       group.position.set(ZX, 0, ZZ);
@@ -175,141 +174,6 @@ export default {
       group.add(gulou);
 
       scene.add(group);
-    }
-
-    // -------------------------------------------------------------------------
-    // 地标十五：【南京南站 (亚洲最大高铁枢纽 · 双重檐京派飞檐斗拱宫殿巨构)】 (X = -10, Z = 315)
-    // 1:1 真实建筑形态重塑：
-    // - 恢弘体量：主站房宽 116m、纵深 68m、高 30m，连同东西两侧无柱波浪站台雨棚与高架立交总跨度达 260m！
-    // - 标志性【双重檐庑殿意象飞檐大屋顶】：下层超深出挑金色藻井底面+银白飞翘屋檐，上层抬升式重檐高侧窗天窗冠顶（内嵌8道纵向蓝晶采光天窗）
-    // - 南北立面各 10 根【巨型汉白玉基座 + 朱红分叉四层立体钢斗拱廊柱】，内衬古铜金中式回纹/冰裂纹通透玻璃幕墙与三座朱红宫门进站口
-    // - 屋檐正中央高悬高清 CanvasTexture 渲染的鲜红发光书法【“南京南站”】巨型匾额
-    // - 二层贯通式高架送客匝道平台 + 东西双环螺旋立交引桥 + 南北中轴镜面水景广场
-    // - 下层 28 股道高架站场：4 列动态高速穿梭的【复兴号红神龙 CR400AF】、【复兴号金凤凰 CR400BF】与【和谐号 CRH380B】动车组
-    // -------------------------------------------------------------------------
-    // 生成南京南站屋顶独立镂空立体大红字【南】【京】【南】【站】单字贴图
-    function createNanzhanSingleCharTexture(ch) {
-      const canvas = document.createElement('canvas');
-      canvas.width = 256;
-      canvas.height = 256;
-      const ctx = canvas.getContext('2d');
-      ctx.fillStyle = '#dc2626';
-      ctx.fillRect(0, 0, 256, 256);
-      ctx.strokeStyle = '#fca5a5';
-      ctx.lineWidth = 10;
-      ctx.strokeRect(8, 8, 240, 240);
-      ctx.fillStyle = '#ffffff';
-      ctx.shadowColor = 'rgba(254, 240, 138, 0.9)';
-      ctx.shadowBlur = 12;
-      ctx.font = 'bold 180px "STKaiti", "KaiTi", "PingFang SC", "Microsoft YaHei", serif';
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'middle';
-      ctx.fillText(ch, 128, 132);
-      const tex = new THREE.CanvasTexture(canvas);
-      tex.needsUpdate = true;
-      return tex;
-    }
-
-    // 生成南京南站正中央开间【通透蓝晶玻璃幕墙】纹理（如实景图中央通透大玻璃窗）
-    function createNanzhanCenterGlassTexture() {
-      const canvas = document.createElement('canvas');
-      canvas.width = 512;
-      canvas.height = 512;
-      const ctx = canvas.getContext('2d');
-      const grad = ctx.createLinearGradient(0, 0, 0, 512);
-      grad.addColorStop(0, '#0f2942');
-      grad.addColorStop(0.22, '#1e4e79');
-      grad.addColorStop(0.75, '#38bdf8');
-      grad.addColorStop(1, '#0c2d48');
-      ctx.fillStyle = grad;
-      ctx.fillRect(0, 0, 512, 512);
-
-      // 顶部深色钢桁架阴影带
-      ctx.fillStyle = 'rgba(15, 23, 42, 0.72)';
-      ctx.fillRect(0, 0, 512, 96);
-
-      // 细密的银灰玻璃幕墙分格网
-      ctx.strokeStyle = 'rgba(226, 232, 240, 0.55)';
-      ctx.lineWidth = 3;
-      for (let x = 0; x <= 512; x += 64) {
-        ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, 512); ctx.stroke();
-      }
-      for (let y = 0; y <= 512; y += 64) {
-        ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(512, y); ctx.stroke();
-      }
-      const tex = new THREE.CanvasTexture(canvas);
-      tex.needsUpdate = true;
-      return tex;
-    }
-
-    // 生成南京南站左右两侧开间【香槟金/古铜色横向百叶遮阳格栅幕墙】纹理（1:1还原实景照片两侧金色百叶窗立面！）
-    function createNanzhanGoldLouverTexture() {
-      const canvas = document.createElement('canvas');
-      canvas.width = 512;
-      canvas.height = 512;
-      const ctx = canvas.getContext('2d');
-
-      // 顶部深蓝高侧窗带
-      ctx.fillStyle = '#1e293b';
-      ctx.fillRect(0, 0, 512, 82);
-
-      // 下部暖香槟金/古铜金百叶基底
-      const grad = ctx.createLinearGradient(0, 82, 512, 512);
-      grad.addColorStop(0, '#d97706');
-      grad.addColorStop(0.5, '#f59e0b');
-      grad.addColorStop(1, '#b45309');
-      ctx.fillStyle = grad;
-      ctx.fillRect(0, 82, 512, 430);
-
-      // 密集的横向百叶遮阳条纹
-      for (let y = 88; y < 512; y += 12) {
-        ctx.fillStyle = '#78350f';
-        ctx.fillRect(0, y, 512, 4);
-        ctx.fillStyle = '#fde68a';
-        ctx.fillRect(0, y + 4, 512, 3);
-      }
-
-      // 竖向金色分隔龙骨立柱
-      ctx.fillStyle = '#92400e';
-      for (let x = 0; x <= 512; x += 128) {
-        ctx.fillRect(x - 6, 0, 12, 512);
-      }
-
-      const tex = new THREE.CanvasTexture(canvas);
-      tex.needsUpdate = true;
-      return tex;
-    }
-
-    // 生成南京南站平顶屋面【纵向晶蓝采光天窗 + 银白直立锁边金属屋面】纹理
-    function createNanzhanRoofTexture() {
-      const canvas = document.createElement('canvas');
-      canvas.width = 1024;
-      canvas.height = 512;
-      const ctx = canvas.getContext('2d');
-      ctx.fillStyle = '#e2e8f0';
-      ctx.fillRect(0, 0, 1024, 512);
-      ctx.strokeStyle = '#cbd5e1';
-      ctx.lineWidth = 2;
-      for (let x = 0; x <= 1024; x += 16) {
-        ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, 512); ctx.stroke();
-      }
-      for (let row = 0; row < 8; row++) {
-        const y = 36 + row * 58;
-        ctx.fillStyle = '#0369a1';
-        ctx.fillRect(64, y, 896, 26);
-        ctx.strokeStyle = '#f8fafc';
-        ctx.lineWidth = 3;
-        ctx.strokeRect(64, y, 896, 26);
-      }
-      const tex = new THREE.CanvasTexture(canvas);
-      tex.needsUpdate = true;
-      return tex;
-    }
-
-
-
-    scene.add(group);
-
     return group;
   }
 };

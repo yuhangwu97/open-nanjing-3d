@@ -28,17 +28,20 @@ import {
 } from '../core/constants.js';
 import {
   createMingXiaolingPlaqueTexture,
-  createJimingPlaqueTexture
+  createJimingPlaqueTexture,
+  createNanzhanCenterGlassTexture,
+  createNanzhanGoldLouverTexture,
+  createNanzhanRoofTexture,
+  createNanzhanSingleCharTexture
 } from '../core/textures.js';
 
 export default {
   id: 'nanzhan',
   name: '南京南站',
   build(scene, ctx) {
-    const group = new THREE.Group();
   const animatedHSRTrains = [];
 
-    function buildNanjingSouthStation() {
+    // buildNanjingSouthStation
       const group = new THREE.Group();
       // 【C位主核】：南京南站雄踞沙盘中南C位 (X = 0, Z = 365)，1:1 严格还原实景照片造型！
       const SX = 0, SZ = 365;
@@ -436,19 +439,6 @@ export default {
       });
 
       scene.add(group);
-    }
-
-    // -------------------------------------------------------------------------
-    // 地标十六：【南京青奥体育馆 (江北新区“江鸥展翅”流线型一场一馆)】 (X = -252, Z = -142)
-    // 1:1 真实细节：
-    // - 2.1万座超大型室内体育馆（亚洲最大室内馆之一）：不对称双曲波浪银白金属屋盖，宛如江鸥展翅欲飞，前端悬挑出锐利的鸥喙雨棚，立面环绕横向流线铝板百叶与蓝青色霓虹光带
-    // - 西侧半敞口波浪形【青奥体育场】（内设翠绿足球场与蓝色塑胶跑道）
-    // - 中央由一条优美的【S形流线云端观景栈桥平台】将一场一馆有机串联
-    // -------------------------------------------------------------------------
-
-
-    scene.add(group);
-
     if (ctx && ctx.addUpdater) {
       ctx.addUpdater((dt, elapsed) => {
       animatedHSRTrains.forEach(tr => {
@@ -458,7 +448,6 @@ export default {
       });
       });
     }
-
     return group;
   }
 };

@@ -55,6 +55,10 @@ controls.target.set(-55, 8, 70);
 const updaters = [];
 let camTween = null;
 let currentSpotId = 'zhongshan';
+let pinsCtrl = null;
+let guideCtrl = null;
+let routesCtrl = null;
+let walkthroughCtrl = null;
 
 const ctx = {
   scene,
@@ -126,16 +130,16 @@ function goToFullSandboxOverview() {
 // ============================================================================
 // 6. UI 系统绑定与交互
 // ============================================================================
-const pinsCtrl = setupMapPins(camera, SPOTS_DB, (spotId, viewIdx) => {
+  pinsCtrl = setupMapPins(camera, SPOTS_DB, (spotId, viewIdx) => {
   selectSpotAndOpenGuide(spotId, viewIdx);
 });
 ctx.updatePinRouteBadges = (stops) => pinsCtrl.updatePinRouteBadges(stops);
 
-const guideCtrl = setupGuideDrawer(SPOTS_DB, ROUTES_DB, (camPos, camLook) => {
+guideCtrl = setupGuideDrawer(SPOTS_DB, ROUTES_DB, (camPos, camLook) => {
   flyToCamera(camPos, camLook);
 }, selectSpotAndOpenGuide);
 
-const routesCtrl = setupRoutes(
+routesCtrl = setupRoutes(
   scene,
   SPOTS_DB,
   ROUTES_DB,
@@ -144,7 +148,7 @@ const routesCtrl = setupRoutes(
   ctx
 );
 
-const walkthroughCtrl = setupWalkthrough(camera, controls, ctx);
+walkthroughCtrl = setupWalkthrough(camera, controls, ctx);
 setupEnvControls(applyEnvironmentMode, (visible) => pinsCtrl.setPinsVisible(visible));
 
 const overviewBtn = document.getElementById('btn-sandbox-overview');

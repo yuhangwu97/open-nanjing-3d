@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { YANGTZE_MAIN_CURVE } from './constants.js';
 
 export function createSkyscraperCurtainWallTexture(glassTop = '#0f2942', glassBot = '#1e3a8a', mullionColor = '#cbd5e1', lightColor = 'rgba(254, 240, 138, 0.78)') {
       const canvas = document.createElement('canvas');

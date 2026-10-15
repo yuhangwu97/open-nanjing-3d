@@ -27,3 +27,7 @@ pnpm-debug.log*
 # OS metadata
 .DS_Store
 Thumbs.db
+
+# Scratch and temp
+scratch/
+

@@ -35,9 +35,8 @@ export default {
   id: 'qingao_arena',
   name: '南京青奥体育馆',
   build(scene, ctx) {
-    const group = new THREE.Group();
 
-    function buildQingaoSportsParkArena() {
+    // buildQingaoSportsParkArena
       const group = new THREE.Group();
       const GX = -635, GZ = 95;
       group.scale.setScalar(1.15);
@@ -133,20 +132,6 @@ export default {
 
       group.add(stadiumGroup);
       scene.add(group);
-    }
-
-    // -------------------------------------------------------------------------
-    // 地标十七：【南京明城墙 · 中华门瓮城 (“天下第一瓮城”四重城门与27藏兵洞)】 (X = 5, Z = 144)
-    // 1:1 真实细节：
-    // - 世界现存规模最大的堡垒式城门瓮城：由南向北依次贯穿【四道拱券城门洞】与【三道矩形内瓮城院落】
-    // - 城台内壁清晰雕琢上下两层密集排列的【27个藏兵洞拱券门】（可藏兵三千）
-    // - 东西两侧设有宽阔坡道式【登城马道】（武将可策马直登城头），顶部环绕600年青砖【凹凸雉堞垛口】与重檐歇山朱红【中华门敌楼】
-    // - 南侧外秦淮河护城河与三孔石拱【长干桥】
-    // -------------------------------------------------------------------------
-
-
-    scene.add(group);
-
     return group;
   }
 };

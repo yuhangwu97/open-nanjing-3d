@@ -1,7 +1,8 @@
 import * as THREE from 'three';
 import { mats } from './materials.js';
+import { ZX_OFFSET_X, CITY_ROAD_SEGMENTS } from './constants.js';
 
-    export function buildCityTrafficAndPedestrians(scene, mats) {
+export function buildCityTrafficAndPedestrians(scene, mats) {
       const animatedCityCars = [];
       const animatedPedestrians = [];
       const trafficGroup = new THREE.Group();

@@ -24,12 +24,20 @@ import {
   MEILING_CENTER_Z,
   getAxisElevation,
   getStairHalfWidth,
-  getPurpleMountainHeight
+  getPurpleMountainHeight,
+  STAIR_RUN,
+  STEPS_PER_SEG,
+  SEG_DY,
+  SEGMENTS,
+  SEG_DZ,
+  PLAT_LEN
 } from '../core/constants.js';
 import {
   createMingXiaolingPlaqueTexture,
   createJimingPlaqueTexture
 } from '../core/textures.js';
+
+const AX = ZX_OFFSET_X;
 
 export default {
   id: 'zhongshan',

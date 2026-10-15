@@ -35,10 +35,9 @@ export default {
   id: 'fuzimiao',
   name: '夫子庙 · 十里秦淮 & 天下文枢',
   build(scene, ctx) {
-    const group = new THREE.Group();
   const animatedQinhuaiBoats = [];
 
-    function buildConfuciusTempleQinhuai() {
+    // buildConfuciusTempleQinhuai
       const group = new THREE.Group();
       const FX = 145, FZ = 195;
 
@@ -409,38 +408,6 @@ export default {
       });
 
       scene.add(group);
-    }
-
-    // ============================================================================
-    // 11. 地标十二：【玄武湖景区 & 明城墙】与 地标十三：【牛首山 · 佛顶宫 & 佛顶塔】
-    // ============================================================================
-    const animatedLakeBoats = [];
-
-    // 生成“古鸡鸣寺”蓝底金字山门匾额纹理
-    function createJimingPlaqueTexture() {
-      const canvas = document.createElement('canvas');
-      canvas.width = 512;
-      canvas.height = 160;
-      const ctx = canvas.getContext('2d');
-      ctx.fillStyle = '#1e3a8a';
-      ctx.fillRect(0, 0, 512, 160);
-      ctx.strokeStyle = '#fbbf24';
-      ctx.lineWidth = 10;
-      ctx.strokeRect(8, 8, 496, 144);
-      ctx.fillStyle = '#fde047';
-      ctx.font = 'bold 82px "STKaiti", "KaiTi", "PingFang SC", serif';
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'middle';
-      ctx.fillText('古 鸡 鸣 寺', 256, 82);
-      const tex = new THREE.CanvasTexture(canvas);
-      tex.needsUpdate = true;
-      return tex;
-    }
-
-
-
-    scene.add(group);
-
     if (ctx && ctx.addUpdater) {
       ctx.addUpdater((dt, elapsed) => {
       animatedQinhuaiBoats.forEach(qb => {
@@ -451,7 +418,6 @@ export default {
       });
       });
     }
-
     return group;
   }
 };

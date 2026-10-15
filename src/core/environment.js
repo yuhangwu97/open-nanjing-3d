@@ -27,7 +27,7 @@ export function setupLighting(scene) {
     scene.add(sunLight);
 
     // 夜景专属点光源组（同步适配 21 大地标新坐标）
-    const nightPointLights = [];
+    nightPointLights.length = 0;
     function addNightGlowLight(x, y, z, colorHex, distance = 110, intensity = 0) {
       const pl = new THREE.PointLight(colorHex, intensity, distance);
       pl.position.set(x, y, z);
@@ -106,9 +106,6 @@ export function buildLeafParticles(scene, ctx) {
     const leafParticles = new THREE.Points(leafGeo, leafMat);
     scene.add(leafParticles);
 
-
-  scene.add(leafGroup);
-
   if (ctx && ctx.addUpdater) {
     ctx.addUpdater((dt, elapsed) => {
       const pos = leafGeo.attributes.position.array;
@@ -127,7 +124,7 @@ export function buildLeafParticles(scene, ctx) {
     });
   }
 
-  return { leafMat, leafGroup };
+  return { leafMat, leafParticles };
 }
 
     // ============================================================================
@@ -239,36 +236,6 @@ export function buildSkyClouds(scene) {
       return { cloudMat: cloudMatGlobal, animatedClouds };
     }
 
-    // 统一的 3D 实体城市路网 CITY_ROAD_SEGMENTS（含中央双黄线柏油机动车道与两侧浅灰人行道）
-    const CITY_ROAD_SEGMENTS = [
-      // (1) 中央路—中山路—中华路南北历史中轴干道（长江大桥南引桥 -> 纪念馆北侧 -> 新街口 -> 中华门西侧 -> 南京南站北广场）
-      { p1: new THREE.Vector3(-145, 0, -165), p2: new THREE.Vector3(-12,  0, -155), carCount: 6, speed: 22, pedCount: 6 },
-      { p1: new THREE.Vector3(-12,  0, -155), p2: new THREE.Vector3(-12,  0, 195),  carCount: 10, speed: 24, pedCount: 10 },
-      { p1: new THREE.Vector3(-12,  0, 195),  p2: new THREE.Vector3(-42,  0, 310),  carCount: 6, speed: 23, pedCount: 6 },
-      // (2) 中山东路—博爱路东西皇城大轴线（奥体东侧 -> 新街口 -> 紫峰大厦北侧 -> 南京博物院前广场 -> 美龄宫南侧）
-      { p1: new THREE.Vector3(-75,  0, 25),   p2: new THREE.Vector3(345,  0, 25),   carCount: 14, speed: 25, pedCount: 12 },
-      { p1: new THREE.Vector3(345,  0, 25),   p2: new THREE.Vector3(345,  0, 165),  carCount: 6, speed: 22, pedCount: 6 },
-      { p1: new THREE.Vector3(345,  0, 125),  p2: new THREE.Vector3(505,  0, 125),  carCount: 6, speed: 22, pedCount: 6 },
-      // (3) 水西门大街—玄武大道东西干线（连接纪念馆南侧、奥体东北侧与钟山北麓）
-      { p1: new THREE.Vector3(-115, 0, -82),  p2: new THREE.Vector3(345,  0, -82),  carCount: 10, speed: 25, pedCount: 8 },
-      { p1: new THREE.Vector3(345,  0, -265), p2: new THREE.Vector3(790,  0, -315), carCount: 10, speed: 26, pedCount: 8 },
-      // (4) 夫子庙—紫峰—中华门景观大道（连接中华门北侧、夫子庙天下文枢大广场与紫峰大厦南侧）
-      { p1: new THREE.Vector3(-42,  0, 145),  p2: new THREE.Vector3(345,  0, 145),  carCount: 10, speed: 22, pedCount: 10 },
-      // (5) 河西新城江东中路南北纵轴大道（从纪念馆南侧 Z=-82 向南延伸至 Z=285，避开纪念馆与奥体中心）
-      { p1: new THREE.Vector3(-75,  0, -82),  p2: new THREE.Vector3(-75,  0, 285),  carCount: 14, speed: 26, pedCount: 10 },
-      // (6) 江山大街—宏运大道东西干线（五桥东引桥 X=-200 -> 南京南站北侧 Z=285 -> 江宁方山北侧）
-      { p1: new THREE.Vector3(-200, 0, 215),  p2: new THREE.Vector3(-42,  0, 285),  carCount: 6, speed: 24, pedCount: 6 },
-      { p1: new THREE.Vector3(-42,  0, 285),  p2: new THREE.Vector3(415,  0, 355),  carCount: 12, speed: 25, pedCount: 8 },
-      // (7) 江北新区浦滨路干线（长江大桥北引桥 -> 老山东麓 -> 青奥体育馆东侧 -> 五桥西引桥 X=-565）
-      { p1: new THREE.Vector3(-145, 0, -485), p2: new THREE.Vector3(-565, 0, -180), carCount: 8, speed: 25, pedCount: 6 },
-      { p1: new THREE.Vector3(-565, 0, -180), p2: new THREE.Vector3(-565, 0, 215),  carCount: 10, speed: 24, pedCount: 8 },
-      // (8) 机场高速与牛首大道干线（南京南站南侧 -> 禄口国际机场 & 牛首山圣境）
-      { p1: new THREE.Vector3(0,    0, 445),  p2: new THREE.Vector3(-315, 0, 565),  carCount: 10, speed: 28, pedCount: 6 },
-      { p1: new THREE.Vector3(0,    0, 445),  p2: new THREE.Vector3(175,  0, 515),  carCount: 8, speed: 26, pedCount: 6 }
-    ];
-
-
-
 export function setupSkyClouds(scene, ctx) {
   const result = buildSkyClouds(scene);
   if (result && result.cloudMat) cloudMatGlobal = result.cloudMat;
@@ -295,12 +262,14 @@ export function applyEnvironmentMode(mode, targetScene) {
       if (mode === 'autumn') {
         wutongCrownMats.forEach((m, i) => m.color.setHex(autumnGolds[i]));
         if (cloudMatGlobal) { cloudMatGlobal.color.setHex(0xfffbeb); cloudMatGlobal.emissive.setHex(0xfef3c7); cloudMatGlobal.opacity = 0.86; }
-        scene.background.setHex(0xfde68a);
-        scene.fog.color.setHex(0xfef3c7);
-        hemiLight.intensity = 0.8;
-        sunLight.intensity = 1.55;
-        sunLight.color.setHex(0xfffbeb);
-        leafMat.opacity = 0.88;
+        if (scene.background && scene.background.setHex) scene.background.setHex(0xfde68a);
+        if (scene.fog && scene.fog.color) scene.fog.color.setHex(0xfef3c7);
+        if (hemiLight) hemiLight.intensity = 0.8;
+        if (sunLight) {
+          sunLight.intensity = 1.55;
+          sunLight.color.setHex(0xfffbeb);
+        }
+        if (leafMat) leafMat.opacity = 0.88;
         mats.redLantern.emissiveIntensity = 0.6;
         mats.warmWindowGlow.emissiveIntensity = 0.35;
         mats.magnoliaLamp.emissiveIntensity = 0.45;
@@ -316,12 +285,14 @@ export function applyEnvironmentMode(mode, targetScene) {
       } else if (mode === 'summer') {
         wutongCrownMats.forEach((m, i) => m.color.setHex(summerGreens[i]));
         if (cloudMatGlobal) { cloudMatGlobal.color.setHex(0xffffff); cloudMatGlobal.emissive.setHex(0xe0f2fe); cloudMatGlobal.opacity = 0.90; }
-        scene.background.setHex(0xdbeafe);
-        scene.fog.color.setHex(0xdbeafe);
-        hemiLight.intensity = 0.84;
-        sunLight.intensity = 1.6;
-        sunLight.color.setHex(0xffffff);
-        leafMat.opacity = 0.2;
+        if (scene.background && scene.background.setHex) scene.background.setHex(0xdbeafe);
+        if (scene.fog && scene.fog.color) scene.fog.color.setHex(0xdbeafe);
+        if (hemiLight) hemiLight.intensity = 0.84;
+        if (sunLight) {
+          sunLight.intensity = 1.6;
+          sunLight.color.setHex(0xffffff);
+        }
+        if (leafMat) leafMat.opacity = 0.2;
         mats.redLantern.emissiveIntensity = 0.4;
         mats.warmWindowGlow.emissiveIntensity = 0.25;
         mats.magnoliaLamp.emissiveIntensity = 0.3;
@@ -336,12 +307,14 @@ export function applyEnvironmentMode(mode, targetScene) {
         nightPointLights.forEach(pl => (pl.intensity = 0));
       } else if (mode === 'night') {
         if (cloudMatGlobal) { cloudMatGlobal.color.setHex(0x1e293b); cloudMatGlobal.emissive.setHex(0x0f172a); cloudMatGlobal.opacity = 0.45; }
-        scene.background.setHex(0x060c18);
-        scene.fog.color.setHex(0x060c18);
-        hemiLight.intensity = 0.24;
-        sunLight.intensity = 0.3;
-        sunLight.color.setHex(0x60a5fa);
-        leafMat.opacity = 0.35;
+        if (scene.background && scene.background.setHex) scene.background.setHex(0x060c18);
+        if (scene.fog && scene.fog.color) scene.fog.color.setHex(0x060c18);
+        if (hemiLight) hemiLight.intensity = 0.24;
+        if (sunLight) {
+          sunLight.intensity = 0.3;
+          sunLight.color.setHex(0x60a5fa);
+        }
+        if (leafMat) leafMat.opacity = 0.35;
         mats.redLantern.emissiveIntensity = 2.5;
         mats.warmWindowGlow.emissiveIntensity = 1.9;
         mats.magnoliaLamp.emissiveIntensity = 2.6;

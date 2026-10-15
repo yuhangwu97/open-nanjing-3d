@@ -28,16 +28,17 @@ import {
 } from '../core/constants.js';
 import {
   createMingXiaolingPlaqueTexture,
-  createJimingPlaqueTexture
+  createJimingPlaqueTexture,
+  createManiDomeDiamondTexture,
+  createKasayaCopperCanopyTexture
 } from '../core/textures.js';
 
 export default {
   id: 'niushoushan',
   name: '牛首山 · 佛顶宫 & 佛顶塔',
   build(scene, ctx) {
-    const group = new THREE.Group();
 
-    function buildNiushoushanUsnisaPalace() {
+    // buildNiushoushanUsnisaPalace
       // -------------------------------------------------------------------------
       // 地标十三：【牛首山文化旅游区 · 佛顶宫 & 佛顶塔】1:1 严格对照最新上传实景图 (image_a07cb5.jpg) 精准重构
       // 实景图 (image_a07cb5.jpg) 核心空间方位与建筑造型（从南向北俯视）：
@@ -574,27 +575,6 @@ export default {
       }
 
       scene.add(group);
-    }
-
-    // ============================================================================
-    // 11B. 新增地标十四 ~ 二十：紫峰大厦、南京南站、南京青奥体育馆、南京城墙(中华门)、老山、方山、禄口机场
-    // ============================================================================
-    const animatedHSRTrains = [];
-    const animatedAirplanes = [];
-    let radarDishMesh = null;
-
-    // -------------------------------------------------------------------------
-    // 地标十四：【紫峰大厦 (450米江苏第一高楼) & 鼓楼公园古今同框】 (X = -65, Z = -28)
-    // 1:1 真实细节：
-    // - SOM设计（迪拜塔同款主创）：三角折面双曲玻璃幕墙柱体 + 阶梯式蟠龙退台缺口
-    // - 外立面密集的竖向银白色锯齿状鱼鳞金属遮阳龙骨 (Vertical Silver Fins) 与水平层间灯带
-    // - 72层观光层内凹发光环廊、顶部斜切阶梯塔冠与直插云霄的超高纯白通信尖塔（总高 108 单位，全图最高峰！）
-    // - 紧邻北侧的明代【鼓楼红墙重檐歇山碑楼】，还原南京最经典的“鼓楼与紫峰古今同框”机位
-    // -------------------------------------------------------------------------
-
-
-    scene.add(group);
-
     return group;
   }
 };

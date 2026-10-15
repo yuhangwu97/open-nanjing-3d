@@ -35,10 +35,9 @@ export default {
   id: 'fangshan',
   name: '江宁方山 · 定林寺斜塔',
   build(scene, ctx) {
-    const group = new THREE.Group();
   let radarDishMesh = null;
 
-    function buildFangshanVolcanoAndLeaningPagoda() {
+    // buildFangshanVolcanoAndLeaningPagoda
       // -------------------------------------------------------------------------
       // 地标十九：【江宁方山（实景航拍图一 1:1 复刻：平顶翠绿茶园火山台地 + 白色球形气象雷达站 + 依山层叠定林寺明黄琉璃瓦建筑群 & 斜塔）】
       // 严格对照实景航拍图一 (image_9d60e7.jpg) 重构：
@@ -330,62 +329,6 @@ export default {
       }
 
       scene.add(group);
-    }
-
-    // -------------------------------------------------------------------------
-    // 地标二十：【南京禄口国际机场 (T1/T2大展翼双航站楼 · 空管塔台 · 双跑道起降客机)】 (X = -115, Z = 295)
-    // 1:1 真实细节：
-    // - T1与T2双航站楼：标志性银白“大鹏展翅 / 翔云”双曲波浪悬挑金属屋盖、Y形双指廊、10座透明登机廊桥与全玻幕墙
-    // - 中央综合交通中心 (GTC) 与高达88米的八角流线型纯白【空管指挥塔台】（顶部带360度蓝玻指挥室与实时旋转雷达）
-    // - 南北两条平行 4F 级大跑道（带跑道钢琴键斑马线、白色中线、红绿助航灯阵列）
-    // - 停机坪停靠的多架宽体客机 + 2架动态循环【滑跑拉升起飞 & 低空进近降落】的民航大客机！
-    // -------------------------------------------------------------------------
-    function createAirlinerMesh(liveryColor = 0x2563eb, scale = 1.0) {
-      const jet = new THREE.Group();
-      // 流线圆柱机身与机鼻
-      const fuselage = new THREE.Mesh(new THREE.CylinderGeometry(0.78, 0.78, 12.5, 14), mats.whiteMarble);
-      fuselage.rotation.z = Math.PI / 2;
-      fuselage.position.y = 1.4;
-      fuselage.castShadow = true;
-      const nose = new THREE.Mesh(new THREE.ConeGeometry(0.78, 2.4, 14), mats.whiteMarble);
-      nose.rotation.z = -Math.PI / 2;
-      nose.position.set(7.4, 1.4, 0);
-      const tailCone = new THREE.Mesh(new THREE.ConeGeometry(0.78, 2.8, 14), mats.whiteMarble);
-      tailCone.rotation.z = Math.PI / 2;
-      tailCone.position.set(-7.6, 1.55, 0);
-      // 驾驶舱深蓝风挡
-      const cockpit = new THREE.Mesh(new THREE.BoxGeometry(1.2, 0.45, 1.1), mats.qingaoGlassMat);
-      cockpit.position.set(6.4, 1.75, 0);
-      // 后掠式主机翼与双发涡扇引擎短舱
-      const mainWing = new THREE.Mesh(new THREE.BoxGeometry(2.6, 0.18, 13.8), mats.silverDome);
-      mainWing.position.set(0.4, 1.35, 0);
-      [-3.4, 3.4].forEach(ez => {
-        const engine = new THREE.Mesh(new THREE.CylinderGeometry(0.42, 0.38, 1.9, 10), new THREE.MeshStandardMaterial({ color: liveryColor, roughness: 0.3 }));
-        engine.rotation.z = Math.PI / 2;
-        engine.position.set(1.1, 0.92, ez);
-        jet.add(engine);
-      });
-      // 垂尾与水平尾翼
-      const vTail = new THREE.Mesh(new THREE.BoxGeometry(2.4, 3.1, 0.22), new THREE.MeshStandardMaterial({ color: liveryColor, roughness: 0.3 }));
-      vTail.position.set(-6.8, 3.0, 0);
-      vTail.rotation.z = 0.28;
-      const hTail = new THREE.Mesh(new THREE.BoxGeometry(1.4, 0.14, 4.8), mats.silverDome);
-      hTail.position.set(-7.0, 1.6, 0);
-      // 机翼尖端红色与绿色航行闪烁灯
-      const navL = new THREE.Mesh(new THREE.SphereGeometry(0.22, 6, 6), mats.runwayRedLight);
-      navL.position.set(0.2, 1.5, -6.9);
-      const navR = new THREE.Mesh(new THREE.SphereGeometry(0.22, 6, 6), mats.runwayGreenLight);
-      navR.position.set(0.2, 1.5, 6.9);
-
-      jet.add(fuselage, nose, tailCone, cockpit, mainWing, vTail, hTail, navL, navR);
-      jet.scale.setScalar(scale);
-      return jet;
-    }
-
-
-
-    scene.add(group);
-
     if (ctx && ctx.addUpdater) {
       ctx.addUpdater((dt, elapsed) => {
       if (radarDishMesh) {
@@ -393,7 +336,6 @@ export default {
       }
       });
     }
-
     return group;
   }
 };

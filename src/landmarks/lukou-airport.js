@@ -31,14 +31,56 @@ import {
   createJimingPlaqueTexture
 } from '../core/textures.js';
 
+function createAirlinerMesh(liveryColor = 0x2563eb, scale = 1.0) {
+  const jet = new THREE.Group();
+  // 流线圆柱机身与机鼻
+  const fuselage = new THREE.Mesh(new THREE.CylinderGeometry(0.78, 0.78, 12.5, 14), mats.whiteMarble);
+  fuselage.rotation.z = Math.PI / 2;
+  fuselage.position.y = 1.4;
+  fuselage.castShadow = true;
+  const nose = new THREE.Mesh(new THREE.ConeGeometry(0.78, 2.4, 14), mats.whiteMarble);
+  nose.rotation.z = -Math.PI / 2;
+  nose.position.set(7.4, 1.4, 0);
+  const tailCone = new THREE.Mesh(new THREE.ConeGeometry(0.78, 2.8, 14), mats.whiteMarble);
+  tailCone.rotation.z = Math.PI / 2;
+  tailCone.position.set(-7.6, 1.55, 0);
+  // 驾驶舱深蓝风挡
+  const cockpit = new THREE.Mesh(new THREE.BoxGeometry(1.2, 0.45, 1.1), mats.qingaoGlassMat);
+  cockpit.position.set(6.4, 1.75, 0);
+  // 后掠式主机翼与双发涡扇引擎短舱
+  const mainWing = new THREE.Mesh(new THREE.BoxGeometry(2.6, 0.18, 13.8), mats.silverDome);
+  mainWing.position.set(0.4, 1.35, 0);
+  [-3.4, 3.4].forEach(ez => {
+    const engine = new THREE.Mesh(new THREE.CylinderGeometry(0.42, 0.38, 1.9, 10), new THREE.MeshStandardMaterial({ color: liveryColor, roughness: 0.3 }));
+    engine.rotation.z = Math.PI / 2;
+    engine.position.set(1.1, 0.92, ez);
+    jet.add(engine);
+  });
+  // 垂尾与水平尾翼
+  const vTail = new THREE.Mesh(new THREE.BoxGeometry(2.4, 3.1, 0.22), new THREE.MeshStandardMaterial({ color: liveryColor, roughness: 0.3 }));
+  vTail.position.set(-6.8, 3.0, 0);
+  vTail.rotation.z = 0.28;
+  const hTail = new THREE.Mesh(new THREE.BoxGeometry(1.4, 0.14, 4.8), mats.silverDome);
+  hTail.position.set(-7.0, 1.6, 0);
+  // 机翼尖端红色与绿色航行闪烁灯
+  const navL = new THREE.Mesh(new THREE.SphereGeometry(0.22, 6, 6), mats.runwayRedLight);
+  navL.position.set(0.2, 1.5, -6.9);
+  const navR = new THREE.Mesh(new THREE.SphereGeometry(0.22, 6, 6), mats.runwayGreenLight);
+  navR.position.set(0.2, 1.5, 6.9);
+
+  jet.add(fuselage, nose, tailCone, cockpit, mainWing, vTail, hTail, navL, navR);
+  jet.scale.setScalar(scale);
+  return jet;
+}
+
 export default {
   id: 'lukou_airport',
   name: '南京禄口国际机场',
   build(scene, ctx) {
-    const group = new THREE.Group();
-  const animatedAirplanes = [];
+    const animatedAirplanes = [];
+    let radarDishMesh = null;
 
-    function buildLukouInternationalAirport() {
+    // buildLukouInternationalAirport
       const group = new THREE.Group();
       const AX = -315, AZ = 620;
       group.scale.setScalar(1.08);
@@ -174,12 +216,6 @@ export default {
       });
 
       scene.add(group);
-    }
-
-
-
-    scene.add(group);
-
     if (ctx && ctx.addUpdater) {
       ctx.addUpdater((dt, elapsed) => {
       animatedAirplanes.forEach(ap => {
@@ -198,9 +234,11 @@ export default {
           ap.mesh.rotation.z = pitch;
         }
       });
-      });
-    }
-
-    return group;
+      if (radarDishMesh) {
+        radarDishMesh.rotation.y = elapsed * 2.2;
+      }
+    });
   }
+  return group;
+}
 };

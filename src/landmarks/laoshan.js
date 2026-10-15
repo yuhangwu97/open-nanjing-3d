@@ -35,9 +35,8 @@ export default {
   id: 'laoshan',
   name: '南京老山国家森林公园',
   build(scene, ctx) {
-    const group = new THREE.Group();
 
-    function buildLaoshanForestPark() {
+    // buildLaoshanForestPark
       const group = new THREE.Group();
       // 响应用户要求：老山坐落江北最左侧 (X = -645, Z = -20)，体量大幅扩建为 148m 宽 × 490m 长的巍峨百里连绵山脉！
       const LX = -820, LZ = -60;
@@ -207,12 +206,6 @@ export default {
       }
 
       scene.add(group);
-    }
-
-
-
-    scene.add(group);
-
     return group;
   }
 };

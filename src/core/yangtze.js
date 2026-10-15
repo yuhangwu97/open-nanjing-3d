@@ -1,33 +1,9 @@
 import * as THREE from 'three';
-import { mats, yangtzeShimmerTex, lakeShimmerTex } from './materials.js';
+import { mats, yangtzeShimmerTex, lakeShimmerTex, cherryBlossomMat } from './materials.js';
+import { sharedGeos, createWutongTree, createWeepingWillow } from './geo-builder.js';
+import { YANGTZE_MAIN_CURVE, getYangtzeHalfWidth } from './constants.js';
 
-export // 半圆弧形长江主航道中心曲线：从西南鱼嘴、江心洲向北流经下关长江大桥，再呈柔美半圆弧线外扩绕过主城北侧（Z = -495 ~ -545，与紫金山 Z=-155 拉开逾 340 单位陆地距离）流向东北栖霞山
-    const YANGTZE_MAIN_CURVE = new THREE.CatmullRomCurve3([
-      new THREE.Vector3(-382.5, 0, 505),
-      new THREE.Vector3(-382.5, 0, 365),
-      new THREE.Vector3(-382.5, 0, 215),
-      new THREE.Vector3(-382.5, 0, 95),
-      new THREE.Vector3(-355,   0, -75),
-      new THREE.Vector3(-265,   0, -225),
-      new THREE.Vector3(-145,   0, -315),
-      new THREE.Vector3(15,     0, -445),
-      new THREE.Vector3(215,    0, -535),
-      new THREE.Vector3(435,    0, -572),
-      new THREE.Vector3(635,    0, -575),
-      new THREE.Vector3(790,    0, -560),
-      new THREE.Vector3(985,    0, -535),
-      new THREE.Vector3(1190,   0, -505)
-    ]);
-
-    function getYangtzeHalfWidth(u) {
-      // 西南江心洲与五桥段江面加宽（半宽 132.0，容纳加长加宽后的江心洲生态岛），流经下关大桥至北段半圆弧平滑过渡为半宽 55
-      if (u < 0.30) return 132.0;
-      if (u < 0.46) {
-        const t = THREE.MathUtils.smoothstep(u, 0.30, 0.46);
-        return THREE.MathUtils.lerp(132.0, 56.0, t);
-      }
-      return 55.0;
-    }
+export { YANGTZE_MAIN_CURVE, getYangtzeHalfWidth };
 
 export function buildYangtzeRiver(scene, mats, ctx) {
   const group = new THREE.Group();

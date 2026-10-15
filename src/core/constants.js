@@ -108,3 +108,60 @@ export function getPurpleMountainHeight(x, z) {
 
   return Math.max(0, h);
 }
+
+// 半圆弧形长江主航道中心曲线：从西南鱼嘴、江心洲向北流经下关长江大桥，再呈柔美半圆弧线外扩绕过主城北侧（Z = -495 ~ -545，与紫金山 Z=-155 拉开逾 340 单位陆地距离）流向东北栖霞山
+export const YANGTZE_MAIN_CURVE = new THREE.CatmullRomCurve3([
+  new THREE.Vector3(-382.5, 0, 505),
+  new THREE.Vector3(-382.5, 0, 365),
+  new THREE.Vector3(-382.5, 0, 215),
+  new THREE.Vector3(-382.5, 0, 95),
+  new THREE.Vector3(-355,   0, -75),
+  new THREE.Vector3(-265,   0, -225),
+  new THREE.Vector3(-145,   0, -315),
+  new THREE.Vector3(15,     0, -445),
+  new THREE.Vector3(215,    0, -535),
+  new THREE.Vector3(435,    0, -572),
+  new THREE.Vector3(635,    0, -575),
+  new THREE.Vector3(790,    0, -560),
+  new THREE.Vector3(985,    0, -535),
+  new THREE.Vector3(1190,   0, -505)
+]);
+
+export function getYangtzeHalfWidth(u) {
+  // 西南江心洲与五桥段江面加宽（半宽 132.0，容纳加长加宽后的江心洲生态岛），流经下关大桥至北段半圆弧平滑过渡为半宽 55
+  if (u < 0.30) return 132.0;
+  if (u < 0.46) {
+    const t = THREE.MathUtils.smoothstep(u, 0.30, 0.46);
+    return THREE.MathUtils.lerp(132.0, 56.0, t);
+  }
+  return 55.0;
+}
+
+// 统一的 3D 实体城市路网 CITY_ROAD_SEGMENTS（含中央双黄线柏油机动车道与两侧浅灰人行道）
+export const CITY_ROAD_SEGMENTS = [
+  // (1) 中央路—中山路—中华路南北历史中轴干道（长江大桥南引桥 -> 纪念馆北侧 -> 新街口 -> 中华门西侧 -> 南京南站北广场）
+  { p1: new THREE.Vector3(-145, 0, -165), p2: new THREE.Vector3(-12,  0, -155), carCount: 6, speed: 22, pedCount: 6 },
+  { p1: new THREE.Vector3(-12,  0, -155), p2: new THREE.Vector3(-12,  0, 195),  carCount: 10, speed: 24, pedCount: 10 },
+  { p1: new THREE.Vector3(-12,  0, 195),  p2: new THREE.Vector3(-42,  0, 310),  carCount: 6, speed: 23, pedCount: 6 },
+  // (2) 中山东路—博爱路东西皇城大轴线（奥体东侧 -> 新街口 -> 紫峰大厦北侧 -> 南京博物院前广场 -> 美龄宫南侧）
+  { p1: new THREE.Vector3(-75,  0, 25),   p2: new THREE.Vector3(345,  0, 25),   carCount: 14, speed: 25, pedCount: 12 },
+  { p1: new THREE.Vector3(345,  0, 25),   p2: new THREE.Vector3(345,  0, 165),  carCount: 6, speed: 22, pedCount: 6 },
+  { p1: new THREE.Vector3(345,  0, 125),  p2: new THREE.Vector3(505,  0, 125),  carCount: 6, speed: 22, pedCount: 6 },
+  // (3) 水西门大街—玄武大道东西干线（连接纪念馆南侧、奥体东北侧与钟山北麓）
+  { p1: new THREE.Vector3(-115, 0, -82),  p2: new THREE.Vector3(345,  0, -82),  carCount: 10, speed: 25, pedCount: 8 },
+  { p1: new THREE.Vector3(345,  0, -265), p2: new THREE.Vector3(790,  0, -315), carCount: 10, speed: 26, pedCount: 8 },
+  // (4) 夫子庙—紫峰—中华门景观大道（连接中华门北侧、夫子庙天下文枢大广场与紫峰大厦南侧）
+  { p1: new THREE.Vector3(-42,  0, 145),  p2: new THREE.Vector3(345,  0, 145),  carCount: 10, speed: 22, pedCount: 10 },
+  // (5) 河西新城江东中路南北纵轴大道（从纪念馆南侧 Z=-82 向南延伸至 Z=285，避开纪念馆与奥体中心）
+  { p1: new THREE.Vector3(-75,  0, -82),  p2: new THREE.Vector3(-75,  0, 285),  carCount: 14, speed: 26, pedCount: 10 },
+  // (6) 江山大街—宏运大道东西干线（五桥东引桥 X=-200 -> 南京南站北侧 Z=285 -> 江宁方山北侧）
+  { p1: new THREE.Vector3(-200, 0, 215),  p2: new THREE.Vector3(-42,  0, 285),  carCount: 6, speed: 24, pedCount: 6 },
+  { p1: new THREE.Vector3(-42,  0, 285),  p2: new THREE.Vector3(415,  0, 355),  carCount: 12, speed: 25, pedCount: 8 },
+  // (7) 江北新区浦滨路干线（长江大桥北引桥 -> 老山东麓 -> 青奥体育馆东侧 -> 五桥西引桥 X=-565）
+  { p1: new THREE.Vector3(-145, 0, -485), p2: new THREE.Vector3(-565, 0, -180), carCount: 8, speed: 25, pedCount: 6 },
+  { p1: new THREE.Vector3(-565, 0, -180), p2: new THREE.Vector3(-565, 0, 215),  carCount: 10, speed: 24, pedCount: 8 },
+  // (8) 机场高速与牛首大道干线（南京南站南侧 -> 禄口国际机场 & 牛首山圣境）
+  { p1: new THREE.Vector3(0,    0, 445),  p2: new THREE.Vector3(-315, 0, 565),  carCount: 10, speed: 28, pedCount: 6 },
+  { p1: new THREE.Vector3(0,    0, 445),  p2: new THREE.Vector3(175,  0, 515),  carCount: 8, speed: 26, pedCount: 6 }
+];
+

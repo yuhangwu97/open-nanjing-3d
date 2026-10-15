@@ -3,7 +3,7 @@ import { mats } from './materials.js';
 import { YANGTZE_MAIN_CURVE } from './yangtze.js';
 import { createMasterplanGroundTexture } from './textures.js';
 
-export function buildSandboxTableBase() {
+export function buildSandboxTableBase(scene, mats) {
       const baseGroup = new THREE.Group();
 
       // 1. 沙盘底层深色金属托盘底座（扩展至 2636 x 2086，中心 X = -20, Z = 45，顶面位于 Y = -4.6）
